@@ -3,6 +3,7 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import ContactHeader from '@/components/molecules/ContactHeader';
+import DialogContactAdd from '@/components/molecules/DialogContactAdd';
 
 const Container = styled.div`
   display: flex;
@@ -13,7 +14,7 @@ const Container = styled.div`
 const StyledContactItem = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   :hover {
     background-color: rgba(255, 255, 255, 0.1);
   }
@@ -126,6 +127,24 @@ export default function HomePage() {
         },
       ],
     },
+    {
+      first_name: 'Jane',
+      last_name: 'Doe',
+      phones: [
+        {
+          number: '1234567890',
+        },
+      ],
+    },
+    {
+      first_name: 'Jane',
+      last_name: 'Doe',
+      phones: [
+        {
+          number: '1234567890',
+        },
+      ],
+    },
   ];
 
   const contactList = contacts.map((contact, index) => {
@@ -139,17 +158,13 @@ export default function HomePage() {
     );
   });
 
+  const [open, setOpen] = React.useState(false);
+
   return (
     <Container>
-      <ContactHeader />
+      <ContactHeader open={open} setOpen={setOpen} />
       <div>{contactList}</div>
-
-      {/* <Alert
-        title='Hello 👋'
-        content='This app uses the Next.js App Router and Emotion.'
-      />
-      <TypeCard title='Molecule' content='This is a molecule component' />
-      <Dashboard /> */}
+      <DialogContactAdd open={open} setOpen={setOpen} />
     </Container>
   );
 }
