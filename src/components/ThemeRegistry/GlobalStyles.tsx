@@ -47,7 +47,7 @@ const baseStyles: CSSObject = {
     lineHeight: '1.5rem',
     margin: 0,
     padding: 0,
-    background: '#fff',
+    background: '#000000',
   },
 };
 

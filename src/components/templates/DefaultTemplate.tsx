@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 const Container = styled.div`
   max-width: 425px;
   margin: 0 auto;
-  padding: 8px 12px;
+  // padding: 8px 12px;
 `;
 
 type Props = {
