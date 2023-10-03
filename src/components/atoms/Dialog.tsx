@@ -8,6 +8,7 @@ const StyledDialog = styled.div<{
   top: 24px;
   height: 100%;
   width: 100%;
+  max-width: 425px;
   background-color: #1c1c1e;
   border-radius: 1rem 1rem 0 0;
   z-index: 100;

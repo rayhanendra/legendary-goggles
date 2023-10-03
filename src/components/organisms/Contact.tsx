@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import ContactHeader from '@/components/molecules/ContactHeader';
-import DialogContactAdd from '@/components/molecules/DialogContactAdd';
+import DialogFormContact from '@/components/molecules/DialogFormContact';
 import ContactList from '@/components/molecules/ContactList';
 
 const Container = styled.div`
@@ -27,7 +27,7 @@ function ContactPage() {
           }}
         />
       </Container>
-      <DialogContactAdd open={open} setOpen={setOpen} />
+      <DialogFormContact open={open} setOpen={setOpen} />
     </>
   );
 }

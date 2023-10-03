@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import React from 'react';
 import { FieldError } from 'react-hook-form';
 
-const StyledInputText = styled.div`
+const StyledInputTel = styled.div`
   input {
     width: 100%;
     border: none;
@@ -32,30 +32,32 @@ type Props = {
   error: FieldError | undefined;
 };
 
-function InputText({ placeholder, onChange, value, error }: Props) {
+function InputTel({ placeholder, onChange, value, error }: Props) {
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const charCode = e.charCode;
     if (charCode === 0) {
       return;
     }
     const char = String.fromCharCode(charCode);
-    const pattern = /[^a-zA-Z\s]/gi;
-    if (pattern.test(char)) {
+    const pattern = /^[0-9]*$/;
+    if (!pattern.test(char)) {
       e.preventDefault();
     }
   };
 
   return (
-    <StyledInputText>
+    <StyledInputTel>
       <input
         placeholder={placeholder}
         onChange={onChange}
         value={value}
+        type='tel'
+        inputMode='tel'
         onKeyPress={handleKeyPress}
       />
       <div className='helper-text'>{error?.message}</div>
-    </StyledInputText>
+    </StyledInputTel>
   );
 }
 
-export default InputText;
+export default InputTel;
