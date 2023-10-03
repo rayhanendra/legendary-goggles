@@ -1,6 +1,5 @@
 import { TypedDocumentNode, gql } from '@apollo/client';
 import { useSuspenseQuery } from '@apollo/experimental-nextjs-app-support/ssr';
-import styled from '@emotion/styled';
 import React, { Suspense } from 'react';
 import ContactListItem from '../atoms/ContactListItem';
 

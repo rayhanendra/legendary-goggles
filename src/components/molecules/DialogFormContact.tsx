@@ -8,6 +8,7 @@ import styled from '@emotion/styled';
 import { DevTool } from '@hookform/devtools';
 import Dialog from '../atoms/Dialog';
 import Image from 'next/image';
+import { TypedDocumentNode, gql, useMutation } from '@apollo/client';
 
 const StyledDialogFormContactAction = styled.div`
   display: flex;
@@ -110,7 +111,7 @@ function DialogFormContact({ open, setOpen }: Props) {
         <StyledStack>
           <div>
             <Controller
-              name='full_name'
+              name='first_name'
               control={control}
               render={({
                 field: { onChange, value },
@@ -197,13 +198,13 @@ const useFormContact = (
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   const defaultValues = {
-    full_name: '',
+    first_name: '',
     last_name: '',
     phones: [],
   };
 
   const validationSchema = yup.object().shape({
-    full_name: yup.string().required('Full name is required'),
+    first_name: yup.string().required('Full name is required'),
     last_name: yup.string().required('Last name is required'),
     phones: yup
       .array()
@@ -242,10 +243,67 @@ const useFormContact = (
     formReset();
   };
 
-  const onSubmit = handleSubmit((data) => {
+  type Data = {
+    insert_contact: {
+      returning: {
+        first_name: string;
+        last_name: string;
+        id: string;
+        phones: { number: string }[];
+      }[];
+    };
+  };
+
+  type Variables = {
+    first_name: string;
+    last_name: string;
+    phones: { number: string }[];
+  };
+
+  const ADD_CONTACT_WITH_PHONES: TypedDocumentNode<Data, Variables> = gql`
+    mutation AddContactWithPhones(
+      $first_name: String!
+      $last_name: String!
+      $phones: [phone_insert_input!]!
+    ) {
+      insert_contact(
+        objects: {
+          first_name: $first_name
+          last_name: $last_name
+          phones: { data: $phones }
+        }
+      ) {
+        returning {
+          first_name
+          last_name
+          id
+          phones {
+            number
+          }
+        }
+      }
+    }
+  `;
+
+  const [addContactWithPhones] = useMutation(ADD_CONTACT_WITH_PHONES);
+
+  const onSubmit = handleSubmit(async (data) => {
     console.log(data);
-    setOpen(false);
-    formReset();
+
+    await addContactWithPhones({
+      variables: {
+        first_name: data.first_name,
+        last_name: data.last_name,
+        phones: data.phones,
+      },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .finally(() => {
+        setOpen(false);
+        formReset();
+      });
   });
 
   const handleAddPhone = () => {
