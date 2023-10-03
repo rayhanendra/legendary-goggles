@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import ThemeRegistry from 'src/components/ThemeRegistry/ThemeRegistry';
 import { Montserrat } from 'next/font/google';
 import DefaultTemplate from '@/components/templates/DefaultTemplate';
+import { ApolloWrapper } from '@/lib/apollo-wrapper';
 
 const montserrat = Montserrat({
   weight: ['100', '300', '400', '700'],
@@ -28,9 +29,11 @@ export default function RootLayout({
         ></link>
       </head>
       <body>
-        <ThemeRegistry>
-          <DefaultTemplate>{children}</DefaultTemplate>
-        </ThemeRegistry>
+        <ApolloWrapper>
+          <ThemeRegistry>
+            <DefaultTemplate>{children}</DefaultTemplate>
+          </ThemeRegistry>
+        </ApolloWrapper>
       </body>
     </html>
   );
