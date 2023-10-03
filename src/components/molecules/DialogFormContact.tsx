@@ -84,72 +84,22 @@ type Props = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function DialogContactAdd({ open, setOpen }: Props) {
-  const defaultValues = {
-    full_name: '',
-    last_name: '',
-    phones: [],
-  };
-
-  const validationSchema = yup.object().shape({
-    full_name: yup.string().required('Full name is required'),
-    last_name: yup.string().required('Last name is required'),
-    phones: yup
-      .array()
-      .of(
-        yup.object().shape({
-          number: yup.string().required('Phone number is required'),
-        })
-      )
-      .required('Phone number is required'),
-  });
-
+function DialogFormContact({ open, setOpen }: Props) {
   const {
     control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    clearErrors,
-  } = useForm({
-    defaultValues: defaultValues,
-    mode: 'onSubmit',
-    resolver: yupResolver(validationSchema),
-  });
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'phones',
-  });
-
-  const formReset = () => {
-    reset();
-    clearErrors();
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    formReset();
-  };
-
-  const onSubmit = (data: any) => {
-    console.log(data);
-    setOpen(false);
-    formReset();
-  };
-
-  const handleAddPhone = () => {
-    append({ number: '' });
-  };
-
-  const handleRemovePhone = (index: number) => {
-    remove(index);
-  };
+    errors,
+    fields,
+    onSubmit,
+    handleAddPhone,
+    handleRemovePhone,
+    handleClose,
+  } = useFormContact(setOpen);
 
   return (
     <Dialog open={open} setOpen={setOpen}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={onSubmit}>
         <StyledDialogFormContactAction>
-          <button className='item' onClick={handleClose}>
+          <button type='button' className='item' onClick={handleClose}>
             Cancel
           </button>
           <div className='title'>New Contact</div>
@@ -243,4 +193,78 @@ function DialogContactAdd({ open, setOpen }: Props) {
   );
 }
 
-export default DialogContactAdd;
+const useFormContact = (
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  const defaultValues = {
+    full_name: '',
+    last_name: '',
+    phones: [],
+  };
+
+  const validationSchema = yup.object().shape({
+    full_name: yup.string().required('Full name is required'),
+    last_name: yup.string().required('Last name is required'),
+    phones: yup
+      .array()
+      .of(
+        yup.object().shape({
+          number: yup.string().required('Phone number is required'),
+        })
+      )
+      .required('Phone number is required'),
+  });
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    clearErrors,
+  } = useForm({
+    defaultValues: defaultValues,
+    mode: 'onSubmit',
+    resolver: yupResolver(validationSchema),
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'phones',
+  });
+
+  const formReset = () => {
+    reset();
+    clearErrors();
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    formReset();
+  };
+
+  const onSubmit = handleSubmit((data) => {
+    console.log(data);
+    setOpen(false);
+    formReset();
+  });
+
+  const handleAddPhone = () => {
+    append({ number: '' });
+  };
+
+  const handleRemovePhone = (index: number) => {
+    remove(index);
+  };
+
+  return {
+    control,
+    errors,
+    fields,
+    onSubmit,
+    handleAddPhone,
+    handleRemovePhone,
+    handleClose,
+  };
+};
+
+export default DialogFormContact;
