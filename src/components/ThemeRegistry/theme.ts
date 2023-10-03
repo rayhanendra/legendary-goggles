@@ -1,14 +1,19 @@
-const theme = {
+import { Theme } from '@emotion/react';
+
+const theme: Theme = {
   palette: {
     primary: {
-      main: '#000',
+      main: '#0a84ff',
     },
     secondary: {
       main: '#fff',
     },
     text: {
-      primary: '#000',
-      secondary: '#fff',
+      primary: '#fff',
+      secondary: '#B0B0B0',
+    },
+    background: {
+      default: '#000000',
     },
   },
 };
