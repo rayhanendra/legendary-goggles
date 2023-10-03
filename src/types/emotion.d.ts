@@ -9,12 +9,18 @@ declare module '@emotion/react' {
       secondary: {
         main: string;
       };
+      error: {
+        light: string;
+      };
       text: {
         primary: string;
         secondary: string;
       };
       background: {
         default: string;
+      };
+      gray: {
+        [key: string]: string;
       };
     };
   }
