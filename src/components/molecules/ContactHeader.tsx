@@ -9,13 +9,12 @@ const StyledContactHeader = styled.div`
   flex-direction: column;
   gap: 1rem;
   padding: 0 16px 12px;
-  // background-color: #000000;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(16px);
 
   .title {
     font-size: 1.8rem;
     font-weight: 700;
-    color: #ffffff;
+    color: ${(props) => props.theme.palette.text.primary};
   }
 
   .input {
@@ -31,12 +30,12 @@ const StyledContactHeaderAction = styled.div`
   align-items: center;
   gap: 1rem;
   z-index: 1;
-  background-color: #000000;
+  background-color: ${(props) => props.theme.palette.background.default};
 
   .action-left {
     display: flex;
     align-items: center;
-    color: #0a84ff;
+    color: ${(props) => props.theme.palette.primary.main};
     font-size: 0.86rem;
     cursor: not-allowed;
   }
