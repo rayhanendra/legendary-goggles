@@ -11,6 +11,7 @@ const StyledContactHeader = styled.div`
   gap: 1rem;
   padding: 0 16px 12px;
   backdrop-filter: blur(16px);
+  z-index: 8;
 
   .title {
     font-size: 1.8rem;
@@ -30,7 +31,7 @@ const StyledContactHeaderAction = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  z-index: 1;
+  z-index: 10;
   background-color: ${(props) => props.theme.palette.background.default};
 
   .action-left {

@@ -61,10 +61,22 @@ function ContactList({ variables }: Props) {
   });
 
   const contactList = contacts.map((contact, index) => {
-    return <ContactListItem contact={contact} key={`${contact.id}-${index}`} />;
+    return (
+      <ContactListItem
+        contact={contact}
+        key={`${contact.id}-${index}`}
+        onDelete={() => {
+          console.log('delete', index);
+        }}
+      />
+    );
   });
 
-  return <Suspense fallback={<div>loading...</div>}>{contactList}</Suspense>;
+  return (
+    <Suspense fallback={<div>loading...</div>}>
+      <div>{contactList}</div>
+    </Suspense>
+  );
 }
 
 export default ContactList;
