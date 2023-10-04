@@ -11,6 +11,7 @@ declare module '@emotion/react' {
       };
       error: {
         light: string;
+        main: string;
       };
       text: {
         primary: string;
