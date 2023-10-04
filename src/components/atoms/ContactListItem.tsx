@@ -16,7 +16,7 @@ const StyledContactItem = styled(animated.div)`
   -webkit-user-select: none;
   user-select: none;
   background: ${(props) => props.theme.palette.error.main};
-  touch-action: none;
+  touch-action: pan-y;
 
   :not(:last-child) {
     border-bottom: 1px solid ${(props) => props.theme.palette.gray[900]};
@@ -33,7 +33,6 @@ const StyledContactItem = styled(animated.div)`
     align-items: flex-start;
     justify-content: center;
     padding: 0rem 1rem;
-    touch-action: none;
 
     .name {
       font-size: 0.86rem;
@@ -88,24 +87,31 @@ function ContactListItem({ contact, onDelete }: Props) {
     x: 0,
   }));
 
-  const bind = useDrag(({ down, movement: [mx] }) => {
-    // Note: Disable swipe to the right
-    if (mx > 0) {
-      return;
-    }
+  const bind = useDrag(
+    ({ down, movement: [mx] }) => {
+      // Note: Disable swipe to the right
+      if (mx > 0) {
+        return;
+      }
 
-    spring.start({
-      x: down ? mx : 0,
-      // immediate: down,
-    });
-
-    const treshold = -60;
-    if (mx < treshold) {
       spring.start({
-        x: treshold,
+        x: down ? mx : 0,
+        // immediate: down,
       });
+
+      const treshold = -60;
+      if (mx < treshold) {
+        spring.start({
+          x: treshold,
+        });
+      }
+    },
+    {
+      axis: 'x',
+      filterTaps: true,
+      // rubberband: true,
     }
-  });
+  );
 
   return (
     <StyledContactItem {...bind()}>
