@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import InputSearch from '../atoms/InputSearch';
 import Image from 'next/image';
+import useContactStore from '@/store/contactStore';
 
 const StyledContactHeader = styled.div`
   position: sticky;
@@ -54,6 +55,13 @@ type Props = {
 };
 
 function ContactHeader({ open, setOpen }: Props) {
+  const searchValue = useContactStore((state) => state.searchValue);
+  const setSearchValue = useContactStore((state) => state.setSearchValue);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+  };
+
   const handleOpenAddContact = () => {
     setOpen(true);
   };
@@ -77,7 +85,7 @@ function ContactHeader({ open, setOpen }: Props) {
       <StyledContactHeader>
         <div className='title'>Contacts</div>
         <div className='input'>
-          <InputSearch />
+          <InputSearch value={searchValue} onchange={handleSearchChange} />
         </div>
       </StyledContactHeader>
     </>

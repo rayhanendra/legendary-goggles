@@ -45,12 +45,20 @@ const StyledInputSearch = styled.div`
   }
 `;
 
-type Props = {};
+type Props = {
+  value: string;
+  onchange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+};
 
-function InputSearch({}: Props) {
+function InputSearch({ value, onchange }: Props) {
   return (
     <StyledInputSearch>
-      <input className='search' placeholder='Search' />
+      <input
+        className='search'
+        placeholder='Search'
+        value={value}
+        onChange={onchange}
+      />
       <div className='search-icon'>
         <Image src='/images/search.svg' alt='search' width={100} height={100} />
       </div>
