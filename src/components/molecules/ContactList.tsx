@@ -1,19 +1,45 @@
-import { TypedDocumentNode, gql } from '@apollo/client';
+import { TypedDocumentNode, gql, useMutation } from '@apollo/client';
 import { useSuspenseQuery } from '@apollo/experimental-nextjs-app-support/ssr';
 import React, { Suspense } from 'react';
 import ContactListItem from '../atoms/ContactListItem';
 
-interface Data {
-  contact: {
-    created_at: string;
+interface DeleteContactPhoneData {
+  delete_contact_by_pk: {
     first_name: string;
-    id: string;
     last_name: string;
-    phones: { number: string }[];
-  }[];
+    id: string;
+  };
 }
 
-interface Variables {
+interface DeleteContactPhoneVariables {
+  id: number;
+}
+
+const DELETE_CONTACT_PHONE: TypedDocumentNode<
+  DeleteContactPhoneData,
+  DeleteContactPhoneVariables
+> = gql`
+  mutation DeleteContactPhone($id: Int!) {
+    delete_contact_by_pk(id: $id) {
+      first_name
+      last_name
+      id
+    }
+  }
+`;
+
+interface GetContactListData {
+  contact:
+    | {
+        created_at: string;
+        first_name: string;
+        id: number;
+        last_name: string;
+        phones: { number: string }[];
+      }[];
+}
+
+interface GetContactListVariables {
   distinct_on?: string[];
   limit?: number;
   offset?: number;
@@ -21,7 +47,10 @@ interface Variables {
   where?: { [key: string]: any };
 }
 
-const GET_CONTACT_LIST: TypedDocumentNode<Data, Variables> = gql`
+const GET_CONTACT_LIST: TypedDocumentNode<
+  GetContactListData,
+  GetContactListVariables
+> = gql`
   query GetContactList(
     $distinct_on: [contact_select_column!]
     $limit: Int
@@ -48,26 +77,90 @@ const GET_CONTACT_LIST: TypedDocumentNode<Data, Variables> = gql`
 `;
 
 type Props = {
-  variables: Variables;
+  variables: GetContactListVariables;
 };
 
 function ContactList({ variables }: Props) {
   const {
     data: { contact: contacts },
   }: {
-    data: Data;
+    data: GetContactListData;
   } = useSuspenseQuery(GET_CONTACT_LIST, {
     variables,
   });
+
+  const [deleteContactPhone] = useMutation(DELETE_CONTACT_PHONE, {
+    // Note: current solution is to refetch the whole list, instead of updating the cache. because right now updating the cache is not working.
+    refetchQueries: [
+      {
+        query: GET_CONTACT_LIST,
+        variables,
+      },
+    ],
+  });
+
+  const handleDelete = (id: number) => {
+    deleteContactPhone({
+      variables: {
+        id,
+      },
+      update: (cache, { data }) => {
+        // // Note: writeQuery and updateQuery just wont work. I dont know why
+        // const existingContacts = cache.readQuery<Data>({
+        //   query: GET_CONTACT_LIST,
+        //   variables,
+        // });
+        // console.log('existingContacts', existingContacts);
+        // const newContacts = existingContacts?.contact.filter(
+        //   (contact) => contact.id !== id
+        // );
+        // console.log('newContacts', newContacts);
+        // cache.writeQuery<Data>({
+        //   query: GET_CONTACT_LIST,
+        //   variables,
+        //   data: {
+        //     contact: newContacts?.length ? newContacts : [],
+        //   },
+        // });
+        // --------------------------------------------
+        // console.log('cache', cache);
+        // console.log('data', data);
+        // console.log('variables', variables);
+        // cache.writeQuery({
+        //   query: GET_CONTACT_LIST,
+        //   data: {
+        //     contact: contacts.filter((contact) => contact.id !== id),
+        //   },
+        // });
+        // --------------------------------------------
+        // cache.updateQuery<Data>(
+        //   {
+        //     query: GET_CONTACT_LIST,
+        //     ...variables,
+        //   },
+        //   (data) => {
+        //     console.log('data', data);
+        //     if (!data) {
+        //       return data;
+        //     }
+        //     console.log('data after', data);
+        //     const newData = {
+        //       ...data,
+        //       contact: data.contact.filter((contact) => contact.id !== id),
+        //     };
+        //     return newData;
+        //   }
+        // );
+      },
+    });
+  };
 
   const contactList = contacts.map((contact, index) => {
     return (
       <ContactListItem
         contact={contact}
         key={`${contact.id}-${index}`}
-        onDelete={() => {
-          console.log('delete', index);
-        }}
+        onDelete={() => handleDelete(Number(contact.id))}
       />
     );
   });
