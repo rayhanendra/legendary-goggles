@@ -24,7 +24,7 @@ export default function RootLayout({
     <html lang='en' className={montserrat.className}>
       <head>
         <link
-          href='https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap'
+          href='https://fonts.googleapis.com/css2?family=Montserrat&display=swap'
           rel='stylesheet'
         ></link>
       </head>

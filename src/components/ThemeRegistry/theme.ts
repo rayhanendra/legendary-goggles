@@ -20,6 +20,7 @@ const theme: Theme = {
       default: '#000000',
     },
     gray: {
+      800: '#3C3A3F',
       900: '#2c2c2e',
     },
   },
