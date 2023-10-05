@@ -2,9 +2,8 @@ import styled from '@emotion/styled';
 import { useDrag } from '@use-gesture/react';
 import React from 'react';
 import { animated, useSpring } from '@react-spring/web';
-import useContactStore from '@/store/contactStore';
 
-const StyledContactItem = styled(animated.div)`
+const StyledContactItem = styled.div`
   position: relative;
   width: 100%;
   height: 64px;
@@ -16,7 +15,7 @@ const StyledContactItem = styled(animated.div)`
   text-align: center;
   -webkit-user-select: none;
   user-select: none;
-  background: ${(props) => props.theme.palette.error.main};
+  // background: ${(props) => props.theme.palette.error.main};
   touch-action: pan-y;
 
   :not(:last-child) {
@@ -34,6 +33,7 @@ const StyledContactItem = styled(animated.div)`
     align-items: flex-start;
     justify-content: center;
     padding: 0rem 1rem;
+    touch-action: pan-y;
 
     :hover {
       background-color: ${(props) => props.theme.palette.gray[800]};
@@ -62,7 +62,6 @@ const StyledContactItem = styled(animated.div)`
   .av {
     width: 60px;
     height: 100%;
-    border-radius: 50%;
     justify-self: right;
     font-size: 0.86rem;
     display: flex;
@@ -70,6 +69,7 @@ const StyledContactItem = styled(animated.div)`
     align-items: center;
     justify-content: center;
     color: ${(props) => props.theme.palette.text.primary};
+    background-color: ${(props) => props.theme.palette.error.main};
 
     .delete {
       font-size: 0.6rem;
@@ -89,39 +89,40 @@ type Props = {
 };
 
 function ContactListItem({ contact, onDelete, onClick }: Props) {
-  const [{ x }, spring] = useSpring(() => ({
+  const [{ x, scale }, api] = useSpring(() => ({
     x: 0,
+    scale: 1,
   }));
 
   const bind = useDrag(
-    ({ down, movement: [mx] }) => {
-      // Note: Disable swipe to the right
-      if (mx > 0) {
-        return;
-      }
-
-      spring.start({
-        x: down ? mx : 0,
-        // immediate: down,
+    ({ active, movement: [x] }) => {
+      api.start({
+        x: active ? x : 0,
+        scale: active ? 1.1 : 1,
+        immediate: (name) => active && name === 'x',
       });
 
       const treshold = -60;
-      if (mx < treshold) {
-        spring.start({
+      if (x < treshold && !active) {
+        api.start({
           x: treshold,
+          immediate: true,
         });
       }
     },
     {
-      axis: 'x',
-      filterTaps: true,
-      // rubberband: true,
+      bounds: { right: 0 },
     }
   );
 
   return (
-    <StyledContactItem {...bind()} onClick={onClick}>
-      <animated.div className='fg' style={{ x }}>
+    <StyledContactItem>
+      <animated.div
+        className='fg'
+        style={{ x, scale }}
+        onClick={onClick}
+        {...bind()}
+      >
         <div className='name'>
           {contact.first_name} {contact.last_name}
         </div>
