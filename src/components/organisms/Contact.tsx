@@ -1,10 +1,11 @@
-import * as React from 'react';
+import React, { Suspense } from 'react';
 import styled from '@emotion/styled';
 import ContactHeader from '@/components/molecules/ContactHeader';
 import DialogFormContact from '@/components/molecules/DialogFormContact';
 import ContactList from '@/components/molecules/ContactList';
 import useContactStore from '@/store/contactStore';
 import { useDebounce } from '@/hooks/useDebounce';
+import DialogContact from '../molecules/DialogContact';
 
 const Container = styled.div`
   display: flex;
@@ -13,8 +14,7 @@ const Container = styled.div`
 `;
 
 function ContactPage() {
-  const [open, setOpen] = React.useState(false);
-
+  const dialogAction = useContactStore((state) => state.dialogAction);
   const searchValue = useContactStore((state) => state.searchValue);
   const debouncedSearchValue = useDebounce(searchValue, 500);
 
@@ -43,18 +43,19 @@ function ContactPage() {
   return (
     <>
       <Container>
-        <ContactHeader open={open} setOpen={setOpen} />
+        <ContactHeader />
         <ContactList
           variables={{
             distinct_on: undefined,
-            limit: 10,
+            limit: undefined,
             offset: undefined,
             order_by: undefined,
             where: where,
           }}
         />
       </Container>
-      <DialogFormContact open={open} setOpen={setOpen} />
+      <DialogContact open={dialogAction.open && dialogAction.type === 'edit'} />
+      <DialogFormContact />
     </>
   );
 }

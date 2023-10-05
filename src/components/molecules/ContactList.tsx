@@ -1,7 +1,8 @@
 import { TypedDocumentNode, gql, useMutation } from '@apollo/client';
 import { useSuspenseQuery } from '@apollo/experimental-nextjs-app-support/ssr';
-import React, { Suspense } from 'react';
+import React, { Suspense, useCallback } from 'react';
 import ContactListItem from '../atoms/ContactListItem';
+import useContactStore from '@/store/contactStore';
 
 interface DeleteContactPhoneData {
   delete_contact_by_pk: {
@@ -81,6 +82,8 @@ type Props = {
 };
 
 function ContactList({ variables }: Props) {
+  const setDialogAction = useContactStore((state) => state.setDialogAction);
+
   const {
     data: { contact: contacts },
   }: {
@@ -99,59 +102,71 @@ function ContactList({ variables }: Props) {
     ],
   });
 
-  const handleDelete = (id: number) => {
-    deleteContactPhone({
-      variables: {
-        id,
-      },
-      update: (cache, { data }) => {
-        // // Note: writeQuery and updateQuery just wont work. I dont know why
-        // const existingContacts = cache.readQuery<Data>({
-        //   query: GET_CONTACT_LIST,
-        //   variables,
-        // });
-        // console.log('existingContacts', existingContacts);
-        // const newContacts = existingContacts?.contact.filter(
-        //   (contact) => contact.id !== id
-        // );
-        // console.log('newContacts', newContacts);
-        // cache.writeQuery<Data>({
-        //   query: GET_CONTACT_LIST,
-        //   variables,
-        //   data: {
-        //     contact: newContacts?.length ? newContacts : [],
-        //   },
-        // });
-        // --------------------------------------------
-        // console.log('cache', cache);
-        // console.log('data', data);
-        // console.log('variables', variables);
-        // cache.writeQuery({
-        //   query: GET_CONTACT_LIST,
-        //   data: {
-        //     contact: contacts.filter((contact) => contact.id !== id),
-        //   },
-        // });
-        // --------------------------------------------
-        // cache.updateQuery<Data>(
-        //   {
-        //     query: GET_CONTACT_LIST,
-        //     ...variables,
-        //   },
-        //   (data) => {
-        //     console.log('data', data);
-        //     if (!data) {
-        //       return data;
-        //     }
-        //     console.log('data after', data);
-        //     const newData = {
-        //       ...data,
-        //       contact: data.contact.filter((contact) => contact.id !== id),
-        //     };
-        //     return newData;
-        //   }
-        // );
-      },
+  const handleDelete = async (id: number) => {
+    try {
+      deleteContactPhone({
+        variables: {
+          id,
+        },
+        update: (cache, { data }) => {
+          // // Note: writeQuery and updateQuery just wont work. I dont know why
+          // const existingContacts = cache.readQuery<Data>({
+          //   query: GET_CONTACT_LIST,
+          //   variables,
+          // });
+          // console.log('existingContacts', existingContacts);
+          // const newContacts = existingContacts?.contact.filter(
+          //   (contact) => contact.id !== id
+          // );
+          // console.log('newContacts', newContacts);
+          // cache.writeQuery<Data>({
+          //   query: GET_CONTACT_LIST,
+          //   variables,
+          //   data: {
+          //     contact: newContacts?.length ? newContacts : [],
+          //   },
+          // });
+          // --------------------------------------------
+          // console.log('cache', cache);
+          // console.log('data', data);
+          // console.log('variables', variables);
+          // cache.writeQuery({
+          //   query: GET_CONTACT_LIST,
+          //   data: {
+          //     contact: contacts.filter((contact) => contact.id !== id),
+          //   },
+          // });
+          // --------------------------------------------
+          // cache.updateQuery<Data>(
+          //   {
+          //     query: GET_CONTACT_LIST,
+          //     ...variables,
+          //   },
+          //   (data) => {
+          //     console.log('data', data);
+          //     if (!data) {
+          //       return data;
+          //     }
+          //     console.log('data after', data);
+          //     const newData = {
+          //       ...data,
+          //       contact: data.contact.filter((contact) => contact.id !== id),
+          //     };
+          //     return newData;
+          //   }
+          // );
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleOpenDialog = (id: number) => {
+    setDialogAction({
+      type: 'edit',
+      open: true,
+      data: id,
     });
   };
 
@@ -161,6 +176,7 @@ function ContactList({ variables }: Props) {
         contact={contact}
         key={`${contact.id}-${index}`}
         onDelete={() => handleDelete(Number(contact.id))}
+        onClick={() => handleOpenDialog(contact.id)}
       />
     );
   });

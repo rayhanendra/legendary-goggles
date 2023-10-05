@@ -50,21 +50,23 @@ const StyledContactHeaderAction = styled.div`
   }
 `;
 
-type Props = {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
+type Props = {};
 
-function ContactHeader({ open, setOpen }: Props) {
+function ContactHeader({}: Props) {
   const searchValue = useContactStore((state) => state.searchValue);
   const setSearchValue = useContactStore((state) => state.setSearchValue);
+
+  const setDialogAction = useContactStore((state) => state.setDialogAction);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
 
   const handleOpenAddContact = () => {
-    setOpen(true);
+    setDialogAction({
+      type: 'add',
+      open: true,
+    });
   };
 
   return (

@@ -9,6 +9,7 @@ import { DevTool } from '@hookform/devtools';
 import Dialog from '../atoms/Dialog';
 import Image from 'next/image';
 import { TypedDocumentNode, gql, useMutation } from '@apollo/client';
+import useContactStore from '@/store/contactStore';
 
 const StyledDialogFormContactAction = styled.div`
   display: flex;
@@ -80,12 +81,56 @@ const StyledPhoneList = styled.div`
   }
 `;
 
-type Props = {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+type AddContactWithPhonesData = {
+  insert_contact: {
+    returning: {
+      first_name: string;
+      last_name: string;
+      id: string;
+      phones: { number: string }[];
+    }[];
+  };
 };
 
-function DialogFormContact({ open, setOpen }: Props) {
+type AddContactWithPhonesVariables = {
+  first_name: string;
+  last_name: string;
+  phones: { number: string }[];
+};
+
+const ADD_CONTACT_WITH_PHONES: TypedDocumentNode<
+  AddContactWithPhonesData,
+  AddContactWithPhonesVariables
+> = gql`
+  mutation AddContactWithPhones(
+    $first_name: String!
+    $last_name: String!
+    $phones: [phone_insert_input!]!
+  ) {
+    insert_contact(
+      objects: {
+        first_name: $first_name
+        last_name: $last_name
+        phones: { data: $phones }
+      }
+    ) {
+      returning {
+        first_name
+        last_name
+        id
+        phones {
+          number
+        }
+      }
+    }
+  }
+`;
+
+type Props = {};
+
+function DialogFormContact({}: Props) {
+  const dialogAction = useContactStore((state) => state.dialogAction);
+
   const {
     control,
     errors,
@@ -94,10 +139,10 @@ function DialogFormContact({ open, setOpen }: Props) {
     handleAddPhone,
     handleRemovePhone,
     handleClose,
-  } = useFormContact(setOpen);
+  } = useFormContact();
 
   return (
-    <Dialog open={open} setOpen={setOpen}>
+    <Dialog open={dialogAction.open && dialogAction.type === 'add'}>
       <form onSubmit={onSubmit}>
         <StyledDialogFormContactAction>
           <button type='button' className='item' onClick={handleClose}>
@@ -187,16 +232,15 @@ function DialogFormContact({ open, setOpen }: Props) {
             )}
           </div>
         </StyledStack>
-
         <DevTool control={control} />
       </form>
     </Dialog>
   );
 }
 
-const useFormContact = (
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
-) => {
+const useFormContact = () => {
+  const setDialogAction = useContactStore((state) => state.setDialogAction);
+
   const defaultValues = {
     first_name: '',
     last_name: '',
@@ -239,51 +283,12 @@ const useFormContact = (
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setDialogAction({
+      type: 'add',
+      open: false,
+    });
     formReset();
   };
-
-  type Data = {
-    insert_contact: {
-      returning: {
-        first_name: string;
-        last_name: string;
-        id: string;
-        phones: { number: string }[];
-      }[];
-    };
-  };
-
-  type Variables = {
-    first_name: string;
-    last_name: string;
-    phones: { number: string }[];
-  };
-
-  const ADD_CONTACT_WITH_PHONES: TypedDocumentNode<Data, Variables> = gql`
-    mutation AddContactWithPhones(
-      $first_name: String!
-      $last_name: String!
-      $phones: [phone_insert_input!]!
-    ) {
-      insert_contact(
-        objects: {
-          first_name: $first_name
-          last_name: $last_name
-          phones: { data: $phones }
-        }
-      ) {
-        returning {
-          first_name
-          last_name
-          id
-          phones {
-            number
-          }
-        }
-      }
-    }
-  `;
 
   const [addContactWithPhones] = useMutation(ADD_CONTACT_WITH_PHONES);
 
@@ -301,7 +306,10 @@ const useFormContact = (
         console.log(res);
       })
       .finally(() => {
-        setOpen(false);
+        setDialogAction({
+          type: 'add',
+          open: false,
+        });
         formReset();
       });
   });

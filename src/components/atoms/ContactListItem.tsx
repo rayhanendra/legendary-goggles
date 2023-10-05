@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useDrag } from '@use-gesture/react';
 import React from 'react';
 import { animated, useSpring } from '@react-spring/web';
+import useContactStore from '@/store/contactStore';
 
 const StyledContactItem = styled(animated.div)`
   position: relative;
@@ -33,6 +34,10 @@ const StyledContactItem = styled(animated.div)`
     align-items: flex-start;
     justify-content: center;
     padding: 0rem 1rem;
+
+    :hover {
+      background-color: ${(props) => props.theme.palette.gray[800]};
+    }
 
     .name {
       font-size: 0.86rem;
@@ -79,10 +84,11 @@ type Props = {
     last_name: string;
     phones: { number: string }[];
   };
-  onDelete?: () => void;
+  onDelete: () => void;
+  onClick: () => void;
 };
 
-function ContactListItem({ contact, onDelete }: Props) {
+function ContactListItem({ contact, onDelete, onClick }: Props) {
   const [{ x }, spring] = useSpring(() => ({
     x: 0,
   }));
@@ -114,7 +120,7 @@ function ContactListItem({ contact, onDelete }: Props) {
   );
 
   return (
-    <StyledContactItem {...bind()}>
+    <StyledContactItem {...bind()} onClick={onClick}>
       <animated.div className='fg' style={{ x }}>
         <div className='name'>
           {contact.first_name} {contact.last_name}

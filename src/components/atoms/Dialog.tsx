@@ -19,11 +19,10 @@ const StyledDialog = styled.div<{
 
 type Props = {
   open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   children: React.ReactNode;
 };
 
-function Dialog({ open, setOpen, children }: Props) {
+function Dialog({ open, children }: Props) {
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
