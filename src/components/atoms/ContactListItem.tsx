@@ -15,7 +15,6 @@ const StyledContactItem = styled.div`
   text-align: center;
   -webkit-user-select: none;
   user-select: none;
-  // background: ${(props) => props.theme.palette.error.main};
   touch-action: pan-y;
 
   :not(:last-child) {
@@ -59,21 +58,37 @@ const StyledContactItem = styled.div`
     pointer-events: none;
   }
 
-  .av {
-    width: 60px;
-    height: 100%;
-    justify-self: right;
-    font-size: 0.86rem;
+  .action {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    color: ${(props) => props.theme.palette.text.primary};
-    background-color: ${(props) => props.theme.palette.error.main};
+    justify-content: space-between;
+
+    .item {
+      width: 60px;
+      height: 100%;
+      border-radius: 0.5rem;
+      font-size: 0.86rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      .text {
+        font-size: 0.6rem;
+        font-weight: 400;
+      }
+    }
+
+    .edit {
+      color: ${(props) => props.theme.palette.text.primary};
+      background-color: ${(props) => props.theme.palette.success.main};
+      border: 1px solid ${(props) => props.theme.palette.background.default};
+    }
 
     .delete {
-      font-size: 0.6rem;
-      font-weight: 400;
+      color: ${(props) => props.theme.palette.text.primary};
+      background-color: ${(props) => props.theme.palette.error.main};
+      border: 1px solid ${(props) => props.theme.palette.background.default};
     }
   }
 `;
@@ -84,54 +99,64 @@ type Props = {
     last_name: string;
     phones: { number: string }[];
   };
+  onEdit: () => void;
   onDelete: () => void;
-  onClick: () => void;
 };
 
-function ContactListItem({ contact, onDelete, onClick }: Props) {
+function ContactListItem({ contact, onEdit, onDelete }: Props) {
   const [{ x, scale }, api] = useSpring(() => ({
     x: 0,
     scale: 1,
   }));
 
   const bind = useDrag(
-    ({ active, movement: [x] }) => {
+    ({ active, movement: [mx] }) => {
+      const tresholdLeft = -60;
+      const tresholdRight = 60;
+
       api.start({
-        x: active ? x : 0,
+        x: active ? mx : 0,
         scale: active ? 1.1 : 1,
         immediate: (name) => active && name === 'x',
       });
 
-      const treshold = -60;
-      if (x < treshold && !active) {
-        api.start({
-          x: treshold,
-          immediate: true,
-        });
+      if (!active) {
+        if (mx < tresholdLeft) {
+          api.start({
+            x: tresholdLeft,
+            immediate: true,
+          });
+        } else if (mx > tresholdRight) {
+          api.start({
+            x: tresholdRight,
+            immediate: true,
+          });
+        }
       }
     },
     {
-      bounds: { right: 0 },
+      bounds: { right: 80, left: -80 },
     }
   );
 
   return (
     <StyledContactItem>
-      <animated.div
-        className='fg'
-        style={{ x, scale }}
-        onClick={onClick}
-        {...bind()}
-      >
+      <animated.div className='fg' style={{ x, scale }} {...bind()}>
         <div className='name'>
           {contact.first_name} {contact.last_name}
         </div>
         <div className='phone'>{contact.phones[0]?.number ?? '-'}</div>
       </animated.div>
+      <div className='action' onClick={onEdit}>
+        <div className='item edit'>
+          <span>✏️</span>
+          <div className='text'>Edit</div>
+        </div>
 
-      <div className='av' onClick={onDelete}>
-        <span>🗑️</span>
-        <div className='delete'>Delete</div>
+        <div className='item delete' onClick={onDelete}>
+          <span>🗑️</span>
+          <div className='text'>Delete</div>
+        </div>
       </div>
     </StyledContactItem>
   );

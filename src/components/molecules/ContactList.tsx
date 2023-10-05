@@ -176,7 +176,7 @@ function ContactList({ variables }: Props) {
         contact={contact}
         key={`${contact.id}-${index}`}
         onDelete={() => handleDelete(Number(contact.id))}
-        onClick={() => handleOpenDialog(contact.id)}
+        onEdit={() => handleOpenDialog(contact.id)}
       />
     );
   });
