@@ -9,8 +9,11 @@ const theme: Theme = {
       main: '#fff',
     },
     error: {
-      main: '#d32f2f',
-      light: '#ef5350',
+      main: '#f44336',
+      light: '#e57373',
+    },
+    success: {
+      main: '#66bb6a',
     },
     text: {
       primary: '#fff',

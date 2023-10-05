@@ -13,6 +13,9 @@ declare module '@emotion/react' {
         light: string;
         main: string;
       };
+      success: {
+        main: string;
+      };
       text: {
         primary: string;
         secondary: string;
