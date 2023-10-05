@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 import ContactHeader from '@/components/molecules/ContactHeader';
 import DialogFormContact from '@/components/molecules/DialogFormContact';
@@ -7,7 +7,7 @@ import useContactStore from '@/store/contactStore';
 import { useDebounce } from '@/hooks/useDebounce';
 import DialogContact from '../molecules/DialogContact';
 
-const Container = styled.div`
+const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -42,7 +42,7 @@ function ContactPage() {
 
   return (
     <>
-      <Container>
+      <StyledContainer>
         <ContactHeader />
         <ContactList
           variables={{
@@ -53,9 +53,11 @@ function ContactPage() {
             where: where,
           }}
         />
-      </Container>
+      </StyledContainer>
       <DialogContact open={dialogAction.open && dialogAction.type === 'edit'} />
-      <DialogFormContact />
+      <DialogFormContact
+        open={dialogAction.open && dialogAction.type === 'add'}
+      />
     </>
   );
 }

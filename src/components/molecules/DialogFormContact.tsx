@@ -126,11 +126,11 @@ const ADD_CONTACT_WITH_PHONES: TypedDocumentNode<
   }
 `;
 
-type Props = {};
+type Props = {
+  open: boolean;
+};
 
-function DialogFormContact({}: Props) {
-  const dialogAction = useContactStore((state) => state.dialogAction);
-
+function DialogFormContact({ open }: Props) {
   const {
     control,
     errors,
@@ -142,7 +142,7 @@ function DialogFormContact({}: Props) {
   } = useFormContact();
 
   return (
-    <Dialog open={dialogAction.open && dialogAction.type === 'add'}>
+    <Dialog open={open}>
       <form onSubmit={onSubmit}>
         <StyledDialogFormContactAction>
           <button type='button' className='item' onClick={handleClose}>
