@@ -37,7 +37,7 @@ const useContactPageQuery = () => {
   const searchParams = useSearchParams();
   const searchValue = searchParams.get('search') || '';
   const page = Number(searchParams.get('page')) || 1;
-  const limit = 2;
+  const limit = 6;
 
   const where = {
     _or: [
