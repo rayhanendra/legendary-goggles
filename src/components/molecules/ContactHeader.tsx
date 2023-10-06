@@ -2,6 +2,8 @@ import styled from '@emotion/styled';
 import InputSearch from '../atoms/InputSearch';
 import Image from 'next/image';
 import useContactStore from '@/store/contactStore';
+import { usePathname, useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 const StyledContactHeader = styled.div`
   position: sticky;
@@ -53,21 +55,8 @@ const StyledContactHeaderAction = styled.div`
 type Props = {};
 
 function ContactHeader({}: Props) {
-  const searchValue = useContactStore((state) => state.searchValue);
-  const setSearchValue = useContactStore((state) => state.setSearchValue);
-
-  const setDialogAction = useContactStore((state) => state.setDialogAction);
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value);
-  };
-
-  const handleOpenAddContact = () => {
-    setDialogAction({
-      type: 'add',
-      open: true,
-    });
-  };
+  const { inputValue, handleSearchChange, handleOpenAddContact } =
+    useContactHeader();
 
   return (
     <>
@@ -88,11 +77,75 @@ function ContactHeader({}: Props) {
       <StyledContactHeader>
         <div className='title'>Contacts</div>
         <div className='input'>
-          <InputSearch value={searchValue} onchange={handleSearchChange} />
+          <InputSearch value={inputValue} onchange={handleSearchChange} />
         </div>
       </StyledContactHeader>
     </>
   );
 }
+
+const useContactHeader = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const setDialogAction = useContactStore((state) => state.setDialogAction);
+
+  const [inputValue, setInputValue] = useState<string>('');
+  const [debouncedValue, setDebouncedValue] = useState<string>('');
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  const handleSearchParams = useCallback(
+    (debouncedValue: string) => {
+      let params = new URLSearchParams(window.location.search);
+      if (debouncedValue.length > 0) {
+        params.set('search', debouncedValue);
+      } else {
+        params.delete('search');
+      }
+
+      router.replace(`${pathname}?${params.toString()}`);
+    },
+    [pathname, router]
+  );
+
+  // Note: Set Mounted
+  useEffect(() => {
+    if (debouncedValue.length > 0 && !mounted) {
+      setMounted(true);
+    }
+  }, [debouncedValue, mounted]);
+
+  // Note: Debounce Input Value
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(inputValue);
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [inputValue]);
+
+  // Note: Search Params
+  useEffect(() => {
+    if (mounted) handleSearchParams(debouncedValue);
+  }, [debouncedValue, handleSearchParams, mounted]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleOpenAddContact = () => {
+    setDialogAction({
+      type: 'add',
+      open: true,
+    });
+  };
+
+  return {
+    inputValue,
+    handleSearchChange,
+    handleOpenAddContact,
+  };
+};
 
 export default ContactHeader;

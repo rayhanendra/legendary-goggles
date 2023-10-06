@@ -1,6 +1,6 @@
 import { TypedDocumentNode, gql, useMutation } from '@apollo/client';
 import { useSuspenseQuery } from '@apollo/experimental-nextjs-app-support/ssr';
-import React, { Suspense, useCallback } from 'react';
+import React, { Suspense } from 'react';
 import ContactListItem from '../atoms/ContactListItem';
 import useContactStore from '@/store/contactStore';
 
@@ -84,12 +84,14 @@ type Props = {
 function ContactList({ variables }: Props) {
   const setDialogAction = useContactStore((state) => state.setDialogAction);
 
-  const {
-    data: { contact: contacts },
-  }: {
-    data: GetContactListData;
-  } = useSuspenseQuery(GET_CONTACT_LIST, {
-    variables,
+  const { data = { contact: [] } } = useSuspenseQuery(GET_CONTACT_LIST, {
+    variables: {
+      distinct_on: undefined,
+      limit: variables.limit,
+      offset: variables.offset,
+      order_by: undefined,
+      where: variables.where,
+    },
   });
 
   const [deleteContactPhone] = useMutation(DELETE_CONTACT_PHONE, {
@@ -157,9 +159,7 @@ function ContactList({ variables }: Props) {
           // );
         },
       });
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const handleOpenDialog = (id: number) => {
@@ -170,7 +170,7 @@ function ContactList({ variables }: Props) {
     });
   };
 
-  const contactList = contacts.map((contact, index) => {
+  const contactList = data.contact.map((contact, index) => {
     return (
       <ContactListItem
         contact={contact}

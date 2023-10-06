@@ -1,6 +1,7 @@
 'use client';
 
 import { ApolloLink, HttpLink } from '@apollo/client';
+// import { offsetLimitPagination } from '@apollo/client/utilities';
 import {
   ApolloNextAppProvider,
   NextSSRApolloClient,
@@ -18,7 +19,16 @@ function makeClient() {
   });
 
   return new NextSSRApolloClient({
-    cache: new NextSSRInMemoryCache(),
+    cache: new NextSSRInMemoryCache({
+      // typePolicies: {
+      //   Query: {
+      //     fields: {
+      //       // Note: this is needed for the pagination cache to work but it doesn't
+      //       contact: offsetLimitPagination(),
+      //     },
+      //   },
+      // },
+    }),
     link:
       typeof window === 'undefined'
         ? ApolloLink.from([
