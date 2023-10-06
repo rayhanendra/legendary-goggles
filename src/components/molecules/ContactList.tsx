@@ -2,7 +2,7 @@ import { TypedDocumentNode, gql, useMutation } from '@apollo/client';
 import { useSuspenseQuery } from '@apollo/experimental-nextjs-app-support/ssr';
 import React, { Suspense } from 'react';
 import ContactListItem from '../atoms/ContactListItem';
-import useContactStore from '@/store/contactStore';
+import useGeneralStore from '@/store/generalStore';
 
 interface DeleteContactPhoneData {
   delete_contact_by_pk: {
@@ -82,7 +82,7 @@ type Props = {
 };
 
 function ContactList({ variables }: Props) {
-  const setDialogAction = useContactStore((state) => state.setDialogAction);
+  const setDialogAction = useGeneralStore((state) => state.setDialogAction);
 
   const { data = { contact: [] } } = useSuspenseQuery(GET_CONTACT_LIST, {
     variables: {

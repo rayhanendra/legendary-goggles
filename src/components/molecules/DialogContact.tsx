@@ -9,7 +9,7 @@ import { DevTool } from '@hookform/devtools';
 import Dialog from '../atoms/Dialog';
 import Image from 'next/image';
 import { TypedDocumentNode, gql, useMutation } from '@apollo/client';
-import useContactStore from '@/store/contactStore';
+import useGeneralStore from '@/store/generalStore';
 import { useSuspenseQuery } from '@apollo/experimental-nextjs-app-support/ssr';
 
 const StyledDialogContactAction = styled.div`
@@ -243,7 +243,7 @@ function DialogContact({ open }: Props) {
 
 // Note: This HOC is neccessary to make the form work properly. And trigger only when the dialog is open.
 const FormParent = ({}: {}) => {
-  const dialogAction = useContactStore((state) => state.dialogAction);
+  const dialogAction = useGeneralStore((state) => state.dialogAction);
 
   const { data } = useSuspenseQuery(GET_CONTACT_DETAIL, {
     variables: {
@@ -277,8 +277,8 @@ const FormComponent = ({
   };
 }) => {
   console.log('data formcomponent', data);
-  const dialogAction = useContactStore((state) => state.dialogAction);
-  const setDialogAction = useContactStore((state) => state.setDialogAction);
+  const dialogAction = useGeneralStore((state) => state.dialogAction);
+  const setDialogAction = useGeneralStore((state) => state.setDialogAction);
 
   const defaultValues = {
     first_name: data.first_name ?? '',

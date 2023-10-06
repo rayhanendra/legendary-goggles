@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import InputSearch from '../atoms/InputSearch';
 import Image from 'next/image';
-import useContactStore from '@/store/contactStore';
+import useGeneralStore from '@/store/generalStore';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -87,7 +87,7 @@ function ContactHeader({}: Props) {
 const useContactHeader = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const setDialogAction = useContactStore((state) => state.setDialogAction);
+  const setDialogAction = useGeneralStore((state) => state.setDialogAction);
 
   const [inputValue, setInputValue] = useState<string>('');
   const [debouncedValue, setDebouncedValue] = useState<string>('');

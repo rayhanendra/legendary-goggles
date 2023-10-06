@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import ContactHeader from '@/components/molecules/ContactHeader';
 import DialogFormContact from '@/components/molecules/DialogFormContact';
 import ContactList from '@/components/molecules/ContactList';
-import useContactStore from '@/store/contactStore';
+import useGeneralStore from '@/store/generalStore';
 import DialogContact from '../molecules/DialogContact';
 import ContactPagination from '../molecules/ContactPagination';
 import { useSearchParams } from 'next/navigation';
@@ -15,7 +15,7 @@ const StyledContainer = styled.div`
 `;
 
 function ContactPage() {
-  const dialogAction = useContactStore((state) => state.dialogAction);
+  const dialogAction = useGeneralStore((state) => state.dialogAction);
   const { queryVariables } = useContactPageQuery();
 
   return (

@@ -9,7 +9,7 @@ import { DevTool } from '@hookform/devtools';
 import Dialog from '../atoms/Dialog';
 import Image from 'next/image';
 import { TypedDocumentNode, gql, useMutation } from '@apollo/client';
-import useContactStore from '@/store/contactStore';
+import useGeneralStore from '@/store/generalStore';
 
 const StyledDialogFormContactAction = styled.div`
   display: flex;
@@ -239,7 +239,7 @@ function DialogFormContact({ open }: Props) {
 }
 
 const useFormContact = () => {
-  const setDialogAction = useContactStore((state) => state.setDialogAction);
+  const setDialogAction = useGeneralStore((state) => state.setDialogAction);
 
   const defaultValues = {
     first_name: '',
