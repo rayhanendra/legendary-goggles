@@ -290,7 +290,9 @@ const useFormContact = () => {
     formReset();
   };
 
-  const [addContactWithPhones] = useMutation(ADD_CONTACT_WITH_PHONES);
+  const [addContactWithPhones] = useMutation(ADD_CONTACT_WITH_PHONES, {
+    refetchQueries: ['GetContactList'],
+  });
 
   const onSubmit = handleSubmit(async (data) => {
     await addContactWithPhones({

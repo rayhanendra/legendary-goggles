@@ -148,8 +148,8 @@ function ContactListItem({ contact, onEdit, onDelete }: Props) {
         </div>
         <div className='phone'>{contact.phones[0]?.number ?? '-'}</div>
       </animated.div>
-      <div className='action' onClick={onEdit}>
-        <div className='item edit'>
+      <div className='action'>
+        <div className='item edit' onClick={onEdit}>
           <span>✏️</span>
           <div className='text'>Edit</div>
         </div>
