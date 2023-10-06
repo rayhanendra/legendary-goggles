@@ -277,7 +277,6 @@ const FormComponent = ({
     phones: { number: string }[];
   };
 }) => {
-  console.log('data formcomponent', data);
   const dialogAction = useGeneralStore((state) => state.dialogAction);
   const setDialogAction = useGeneralStore((state) => state.setDialogAction);
 
@@ -336,21 +335,16 @@ const FormComponent = ({
     },
     skip: !dialogAction.open && dialogAction.type !== 'edit',
   });
-  console.log('existingData', existingData);
   const [editContact] = useMutation(EDIT_CONTACT);
   const [editPhoneNumber] = useMutation(EDIT_PHONE_NUMBER);
   const [addNumberToContact] = useMutation(ADD_NUMBER_TO_CONTACT);
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log('submit', data);
-
     if (
-      existingData?.contact_by_pk.first_name === data.first_name &&
-      existingData?.contact_by_pk.last_name === data.last_name
+      !existingData?.contact_by_pk.first_name === !data.first_name &&
+      !existingData?.contact_by_pk.last_name === !data.last_name
     ) {
-      console.log('NAME:no change');
-    } else {
-      console.log('NAME:change');
+      // Note: if there is a change in name
       try {
         await editContact({
           variables: {
@@ -361,8 +355,6 @@ const FormComponent = ({
             },
           },
         });
-
-        // handleClose();
       } catch (error) {}
     }
 
@@ -374,35 +366,35 @@ const FormComponent = ({
       a1.length === a2.length &&
       a1.every((o: any, idx: any) => objectsEqual(o, a2[idx]));
 
-    if (arraysEqual(existingData?.contact_by_pk.phones, data.phones)) {
-      console.log('PHONE:no change ');
-    } else {
-      console.log('PHONE:change');
-      // Update phone numbers
+    if (!arraysEqual(existingData?.contact_by_pk.phones, data.phones)) {
+      // Note: if there is a change in phone number
       try {
-        data.phones.forEach(async (phone, index) => {
-          if (
-            existingData?.contact_by_pk.phones[index]?.number === phone.number
-          ) {
-            console.log('PHONE:no change', index);
-            return;
-          }
+        await Promise.all(
+          data.phones.map(async (phone, index) => {
+            if (
+              existingData?.contact_by_pk.phones[index]?.number === phone.number
+            ) {
+              // Note: there is no change in phone number at this index
+              return;
+            }
 
-          console.log('PHONE: edit', index);
-          await editPhoneNumber({
-            variables: {
-              pk_columns: {
-                number: existingData?.contact_by_pk.phones[index]?.number ?? '',
-                contact_id: dialogAction.data,
+            // Note: edit phone number at this index
+            await editPhoneNumber({
+              variables: {
+                pk_columns: {
+                  number:
+                    existingData?.contact_by_pk.phones[index]?.number ?? '',
+                  contact_id: dialogAction.data,
+                },
+                new_phone_number: phone.number,
               },
-              new_phone_number: phone.number,
-            },
-          });
-        });
+            });
+          })
+        );
       } catch (error) {}
     }
 
-    // Add phone numbers
+    // Note: Add phone numbers
     for (const phone of data.phones) {
       if (
         !existingData?.contact_by_pk.phones.find(
@@ -410,6 +402,7 @@ const FormComponent = ({
         ) &&
         existingData?.contact_by_pk.phones?.length !== data.phones.length
       ) {
+        // Note: if phone number does not exist and the length of the existing phone number is not equal to the length of the new phone number
         try {
           await addNumberToContact({
             variables: {
@@ -418,8 +411,6 @@ const FormComponent = ({
             },
           });
         } catch (error) {}
-      } else {
-        console.log('PHONE:already exist');
       }
     }
 

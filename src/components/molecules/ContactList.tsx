@@ -111,54 +111,6 @@ function ContactList({ variables }: Props) {
         variables: {
           id,
         },
-        update: (cache, { data }) => {
-          // // Note: writeQuery and updateQuery just wont work. I dont know why
-          // const existingContacts = cache.readQuery<Data>({
-          //   query: GET_CONTACT_LIST,
-          //   variables,
-          // });
-          // console.log('existingContacts', existingContacts);
-          // const newContacts = existingContacts?.contact.filter(
-          //   (contact) => contact.id !== id
-          // );
-          // console.log('newContacts', newContacts);
-          // cache.writeQuery<Data>({
-          //   query: GET_CONTACT_LIST,
-          //   variables,
-          //   data: {
-          //     contact: newContacts?.length ? newContacts : [],
-          //   },
-          // });
-          // --------------------------------------------
-          // console.log('cache', cache);
-          // console.log('data', data);
-          // console.log('variables', variables);
-          // cache.writeQuery({
-          //   query: GET_CONTACT_LIST,
-          //   data: {
-          //     contact: contacts.filter((contact) => contact.id !== id),
-          //   },
-          // });
-          // --------------------------------------------
-          // cache.updateQuery<Data>(
-          //   {
-          //     query: GET_CONTACT_LIST,
-          //     ...variables,
-          //   },
-          //   (data) => {
-          //     console.log('data', data);
-          //     if (!data) {
-          //       return data;
-          //     }
-          //     console.log('data after', data);
-          //     const newData = {
-          //       ...data,
-          //       contact: data.contact.filter((contact) => contact.id !== id),
-          //     };
-          //     return newData;
-          //   }
-          // );
-        },
       });
     } catch (error) {}
   };

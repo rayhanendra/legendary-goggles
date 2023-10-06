@@ -293,8 +293,6 @@ const useFormContact = () => {
   const [addContactWithPhones] = useMutation(ADD_CONTACT_WITH_PHONES);
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data);
-
     await addContactWithPhones({
       variables: {
         first_name: data.first_name,
@@ -302,9 +300,7 @@ const useFormContact = () => {
         phones: data.phones,
       },
     })
-      .then((res) => {
-        console.log(res);
-      })
+      .then((res) => {})
       .finally(() => {
         setDialogAction({
           type: 'add',
