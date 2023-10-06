@@ -11,6 +11,7 @@ import Image from 'next/image';
 import { TypedDocumentNode, gql, useMutation } from '@apollo/client';
 import useGeneralStore from '@/store/generalStore';
 import { useSuspenseQuery } from '@apollo/experimental-nextjs-app-support/ssr';
+// import Loader from '../atoms/Loader';
 
 const StyledDialogContactAction = styled.div`
   display: flex;
@@ -236,7 +237,9 @@ type Props = {
 function DialogContact({ open }: Props) {
   return (
     <Dialog open={open}>
+      {/* <Suspense fallback={<Loader />}> */}
       <FormParent />
+      {/* </Suspense> */}
     </Dialog>
   );
 }
@@ -253,15 +256,13 @@ const FormParent = ({}: {}) => {
   });
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <FormComponent
-        data={{
-          first_name: data?.contact_by_pk.first_name ?? '',
-          last_name: data?.contact_by_pk.last_name ?? '',
-          phones: data?.contact_by_pk.phones ?? [],
-        }}
-      />
-    </Suspense>
+    <FormComponent
+      data={{
+        first_name: data?.contact_by_pk.first_name ?? '',
+        last_name: data?.contact_by_pk.last_name ?? '',
+        phones: data?.contact_by_pk.phones ?? [],
+      }}
+    />
   );
 };
 

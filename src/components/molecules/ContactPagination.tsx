@@ -13,6 +13,8 @@ const StyledPagination = styled.div`
   color: ${(props) => props.theme.palette.text.secondary};
   width: 100%;
   max-width: 425px;
+  background-color: ${(props) => props.theme.palette.background.default};
+  z-index: 10;
 
   button {
     background-color: transparent;

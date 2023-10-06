@@ -3,6 +3,7 @@ import { useSuspenseQuery } from '@apollo/experimental-nextjs-app-support/ssr';
 import React, { Suspense } from 'react';
 import ContactListItem from '../atoms/ContactListItem';
 import useGeneralStore from '@/store/generalStore';
+import Loader from '../atoms/Loader';
 
 interface DeleteContactPhoneData {
   delete_contact_by_pk: {
@@ -181,11 +182,15 @@ function ContactList({ variables }: Props) {
     );
   });
 
+  return <div>{contactList}</div>;
+}
+
+function ContactListSuspense({ variables }: Props) {
   return (
-    <Suspense fallback={<div>loading...</div>}>
-      <div>{contactList}</div>
+    <Suspense fallback={<Loader />}>
+      <ContactList variables={variables} />
     </Suspense>
   );
 }
 
-export default ContactList;
+export default ContactListSuspense;
