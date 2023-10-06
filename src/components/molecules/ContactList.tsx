@@ -49,7 +49,7 @@ interface GetContactListVariables {
   where?: { [key: string]: any };
 }
 
-const GET_CONTACT_LIST: TypedDocumentNode<
+export const GET_CONTACT_LIST: TypedDocumentNode<
   GetContactListData,
   GetContactListVariables
 > = gql`

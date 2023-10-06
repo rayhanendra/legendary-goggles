@@ -88,7 +88,7 @@ const useContactPageQuery = () => {
   useEffect(() => {
     setQueryVariables({
       ...queryVariables,
-      offset: page * limit - limit,
+      offset: Number(page) * limit - limit,
       where: where,
     });
   }, [page]);
