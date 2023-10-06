@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import InputSearch from '../atoms/InputSearch';
 import Image from 'next/image';
 import useGeneralStore from '@/store/generalStore';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 const StyledContactHeader = styled.div`
@@ -87,6 +87,7 @@ function ContactHeader({}: Props) {
 const useContactHeader = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams()!;
   const setDialogAction = useGeneralStore((state) => state.setDialogAction);
 
   const [inputValue, setInputValue] = useState<string>('');
@@ -129,6 +130,13 @@ const useContactHeader = () => {
   useEffect(() => {
     if (mounted) handleSearchParams(debouncedValue);
   }, [debouncedValue, handleSearchParams, mounted]);
+
+  // Note: Set Input Value from Search Params on Mount
+  useEffect(() => {
+    if (searchParams.get('search')) {
+      setInputValue(searchParams.get('search')!);
+    }
+  }, [searchParams]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
