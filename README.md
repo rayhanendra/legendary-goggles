@@ -27,3 +27,9 @@ Install it and run:
 yarn install
 yarn dev
 ```
+
+## How to test
+
+```bash
+yarn test
+```
