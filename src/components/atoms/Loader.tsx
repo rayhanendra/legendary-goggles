@@ -3,6 +3,10 @@ import Image from 'next/image';
 import React from 'react';
 
 const StyledLoader = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   justify-content: center;
