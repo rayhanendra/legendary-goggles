@@ -53,9 +53,10 @@ function InputTel({ placeholder, onChange, value, error }: Props) {
         value={value}
         type='tel'
         inputMode='tel'
+        autoComplete='off'
         onKeyPress={handleKeyPress}
       />
-      <div className='helper-text'>{error?.message}</div>
+      {error?.message && <div className='helper-text'>{error?.message}</div>}
     </StyledInputTel>
   );
 }

@@ -40,7 +40,7 @@ const StyledDialogContactAction = styled.div`
 const StyledAddPhone = styled.button`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1.2rem;
   width: 100%;
   border: none;
   outline: none;
@@ -70,16 +70,14 @@ const StyledPhoneList = styled.div`
     font-weight: 400;
     background-color: ${({ theme }) => theme.palette.gray[900]}; // #2c2c2e
     color: ${({ theme }) => theme.palette.text.primary};
+  }
 
-    button {
-      border: none;
-      outline: none;
-      background-color: transparent;
-      color: ${({ theme }) => theme.palette.text.primary};
-      font-size: 1.2rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
+  .button {
+    position: relative;
+    left: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 `;
 
@@ -467,15 +465,16 @@ const FormComponent = ({
           <StyledPhoneList>
             {fields.map((item, index) => (
               <div key={item.id} className='item'>
-                <div>
-                  <div onClick={() => handleRemovePhone(index)}>
-                    <Image
-                      src='/images/minus-rounded.svg'
-                      alt='minus-rounded'
-                      width={20}
-                      height={20}
-                    />
-                  </div>
+                <div
+                  onClick={() => handleRemovePhone(index)}
+                  className='button'
+                >
+                  <Image
+                    src='/images/minus-rounded.svg'
+                    alt='minus-rounded'
+                    width={20}
+                    height={20}
+                  />
                 </div>
                 <Controller
                   name={`phones.${index}.number`}

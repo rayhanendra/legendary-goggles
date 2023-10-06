@@ -51,9 +51,10 @@ function InputText({ placeholder, onChange, value, error }: Props) {
         placeholder={placeholder}
         onChange={onChange}
         value={value}
+        autoComplete='off'
         onKeyPress={handleKeyPress}
       />
-      <div className='helper-text'>{error?.message}</div>
+      {error?.message && <div className='helper-text'>{error?.message}</div>}
     </StyledInputText>
   );
 }

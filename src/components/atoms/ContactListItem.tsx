@@ -66,6 +66,7 @@ const StyledContactItem = styled.div`
     .item {
       width: 60px;
       height: 100%;
+      margin: 0 6px;
       border-radius: 0.5rem;
       font-size: 0.86rem;
       display: flex;
