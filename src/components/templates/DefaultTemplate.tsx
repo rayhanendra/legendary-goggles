@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 const Container = styled.div`
   max-width: 425px;
   margin: 0 auto;
+  overflow-x: hidden;
   // padding: 8px 12px;
 `;
 
